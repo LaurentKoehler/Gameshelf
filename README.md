@@ -1,25 +1,25 @@
 # GameShelf
 
-Application web de gestion de backlog de jeux vidéo : rechercher des jeux via l'API RAWG, les ajouter à sa bibliothèque avec un statut, les noter, et visualiser des statistiques sur sa collection.
+A web app to manage a video game backlog: search games through the RAWG API, add them to a personal library with a status, rate them, and visualize statistics about the collection.
 
 ## Stack
 
 - Vite + React (JavaScript)
 - Tailwind CSS + DaisyUI
-- Recharts (à venir)
-- localStorage pour la persistance
-- API [RAWG](https://rawg.io)
+- Recharts (coming soon)
+- localStorage for persistence
+- [RAWG](https://rawg.io) API
 
-## Installation
+## Setup
 
 ```bash
 npm install
 cp .env.example .env
-# puis renseigner VITE_RAWG_API_KEY dans .env
+# then set VITE_RAWG_API_KEY in .env
 npm run dev
 ```
 
-## Commandes
+## Commands
 
-- `npm run dev` — serveur de développement
-- `npm run build` — build de production
+- `npm run dev` — development server
+- `npm run build` — production build

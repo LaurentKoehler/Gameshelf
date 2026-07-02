@@ -1,75 +1,75 @@
-# GameShelf — Spécification fonctionnelle
+# GameShelf — Functional specification
 
 ## Vision
-Tous les joueurs ont une « pile de honte » : jeux achetés jamais lancés, jeux commencés jamais finis. GameShelf permet de reprendre le contrôle : chercher n'importe quel jeu, l'ajouter à sa bibliothèque avec un statut, le noter, et visualiser des statistiques sur sa collection.
+Every gamer has a "pile of shame": games bought but never launched, games started but never finished. GameShelf helps take back control: search any game, add it to a personal library with a status, rate it, and visualize statistics about the collection.
 
-## Modèle de données
-Un jeu dans la bibliothèque (stocké en localStorage sous la clé `gameshelf-library`) :
+## Data model
+A game in the library (stored in localStorage under the key `gameshelf-library`):
 
 ```js
 {
-  id: 3498,                    // id RAWG
+  id: 3498,                    // RAWG id
   title: "Elden Ring",
-  cover: "https://...",        // background_image RAWG
+  cover: "https://...",        // RAWG background_image
   released: "2022-02-25",
-  genres: ["Action", "RPG"],   // noms des genres RAWG
-  platforms: ["PC", "PS5"],    // noms des plateformes parentes
-  metacritic: 96,              // peut être null
+  genres: ["Action", "RPG"],   // RAWG genre names
+  platforms: ["PC", "PS5"],    // parent platform names
+  metacritic: 96,              // can be null
   status: "playing",           // "wishlist" | "backlog" | "playing" | "finished" | "dropped"
-  rating: 9,                   // note perso 1-10, null si non noté
-  addedAt: "2026-07-03",       // date d'ajout
-  finishedAt: null             // date de passage à "finished", sinon null
+  rating: 9,                   // personal rating 1-10, null if unrated
+  addedAt: "2026-07-03",       // date added
+  finishedAt: null             // date the status became "finished", otherwise null
 }
 ```
 
-Libellés français des statuts : Wishlist, À faire, En cours, Terminé, Abandonné.
+French labels for statuses (UI is in French): Wishlist, À faire, En cours, Terminé, Abandonné.
 
-## Étapes (une à la fois, commit à la fin de chacune)
+## Steps (one at a time, commit at the end of each)
 
-### Étape 1 — Fondations
-- Initialiser git, projet Vite + React, Tailwind + DaisyUI, structure de dossiers.
-- Layout de base : header avec logo/titre « GameShelf » et emplacement de la barre de recherche, zone de contenu, footer avec « Data by RAWG » (lien vers rawg.io).
-- Thème sombre DaisyUI par défaut.
-- `.gitignore` (node_modules, .env), `.env.example`, README minimal.
+### Step 1 — Foundations
+- Initialize git, Vite + React project, Tailwind + DaisyUI, folder structure.
+- Base layout: header with "GameShelf" logo/title and a placeholder for the search bar, content area, footer with "Data by RAWG" (link to rawg.io).
+- DaisyUI dark theme by default.
+- `.gitignore` (node_modules, .env), `.env.example`, minimal README.
 
-### Étape 2 — Recherche RAWG
-- Barre de recherche dans le header : à la saisie (debounce ~400 ms), appel à `GET /games?search=...&page_size=8`.
-- Affichage des résultats en dropdown sous la barre : jaquette miniature, titre, année, plateformes.
-- États : chargement (spinner), aucun résultat, erreur réseau.
-- Clic sur un résultat → modale de la fiche jeu avec bouton « Ajouter » et choix du statut.
+### Step 2 — RAWG search
+- Search bar in the header: on typing (debounce ~400 ms), call `GET /games?search=...&page_size=8`.
+- Results shown in a dropdown under the bar: thumbnail cover, title, year, platforms.
+- States: loading (spinner), no results, network error.
+- Clicking a result → game detail modal with an "Ajouter" button and status picker.
 
-### Étape 3 — Bibliothèque et persistance
-- Custom hook `useLibrary` : lecture/écriture localStorage, ajout, suppression, mise à jour d'un jeu.
-- Grille de cartes `GameCard` : jaquette, titre, badge de statut coloré, note perso.
-- Empêcher les doublons (un jeu déjà présent affiche « Déjà dans la bibliothèque »).
-- État vide accueillant si la bibliothèque est vide (invitation à chercher un premier jeu).
+### Step 3 — Library and persistence
+- Custom hook `useLibrary`: localStorage read/write, add, remove, update a game.
+- Grid of `GameCard` components: cover, title, colored status badge, personal rating.
+- Prevent duplicates (an already-added game shows "Déjà dans la bibliothèque").
+- Friendly empty state when the library is empty (invite to search for a first game).
 
-### Étape 4 — Gestion d'un jeu
-- Sur chaque carte : changer le statut (menu déroulant ou boutons), noter de 1 à 10, supprimer (avec confirmation).
-- Passage à « Terminé » → enregistrer `finishedAt` automatiquement.
+### Step 4 — Managing a game
+- On each card: change status (dropdown or buttons), rate 1-10, delete (with confirmation).
+- Switching to "finished" → record `finishedAt` automatically.
 
-### Étape 5 — Filtres et tri
-- Barre de filtres par statut (Tous / Wishlist / À faire / En cours / Terminés / Abandonnés) avec compteur par statut.
-- Tri : date d'ajout, ordre alphabétique, note perso, note Metacritic.
-- Filtre par genre (liste déduite des jeux présents).
+### Step 5 — Filters and sorting
+- Status filter bar (Tous / Wishlist / À faire / En cours / Terminés / Abandonnés) with a counter per status.
+- Sorting: date added, alphabetical, personal rating, Metacritic score.
+- Genre filter (list derived from the games present).
 
-### Étape 6 — Page statistiques
-- Compteurs : total, terminés dans l'année, en cours, note moyenne.
-- Graphique en barres : jeux terminés par mois (12 derniers mois).
-- Graphique en camembert/donut : répartition par genre.
-- Navigation simple entre « Bibliothèque » et « Stats » (React Router ou état local, au choix le plus simple).
+### Step 6 — Stats page
+- Counters: total, finished this year, currently playing, average rating.
+- Bar chart: games finished per month (last 12 months).
+- Pie/donut chart: distribution by genre.
+- Simple navigation between "Bibliothèque" and "Stats" (React Router or local state, whichever is simpler).
 
-### Étape 7 — Finitions
-- Responsive mobile (la grille passe en 1-2 colonnes).
-- Toasts de confirmation (ajout, suppression).
-- Vérification accessibilité de base : labels, alt sur les images, contraste, navigation clavier sur la recherche.
-- README complet : description, screenshots, stack, installation, section « Comment ce projet a été construit avec Claude Code », limite connue (clé API visible côté client) et solution prévue en v2 (proxy backend).
+### Step 7 — Polish
+- Mobile responsiveness (grid drops to 1-2 columns).
+- Confirmation toasts (add, delete).
+- Basic accessibility pass: labels, alt on images, contrast, keyboard navigation on search.
+- Full README (in English): description, screenshots, stack, setup, a "How this project was built with Claude Code" section, known limitation (API key visible client-side) and the planned v2 fix (backend proxy).
 
-### Étape 8 — Déploiement
-- Build de production, déploiement sur Vercel ou Netlify (variable d'environnement pour la clé).
-- Ajout du lien de la démo dans le README et la description GitHub.
+### Step 8 — Deployment
+- Production build, deploy to Vercel or Netlify (environment variable for the key).
+- Add the live demo link to the README and the GitHub repo description.
 
-## Hors périmètre v1 (ne pas implémenter)
-- Backend, comptes utilisateurs, authentification.
-- Import automatique depuis Steam ou autres plateformes.
-- Mode multijoueur / partage de bibliothèques.
+## Out of scope for v1 (do not implement)
+- Backend, user accounts, authentication.
+- Automatic import from Steam or other platforms.
+- Multiplayer / library sharing.

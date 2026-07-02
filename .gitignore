@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 
-# Variables d'environnement (contient la clé API RAWG)
+# Environment variables (contains the RAWG API key)
 .env
 
 # Editor directories and files

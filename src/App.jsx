@@ -7,7 +7,7 @@ function App() {
       <Header />
 
       <main className="flex-1 container mx-auto px-4 py-8">
-        {/* La bibliothèque de jeux sera affichée ici (étape 3) */}
+        {/* The game library will be displayed here (step 3) */}
         <p className="text-center text-base-content/60">
           La bibliothèque de jeux arrivera bientôt.
         </p>

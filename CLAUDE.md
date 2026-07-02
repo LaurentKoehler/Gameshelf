@@ -1,48 +1,48 @@
-# GameShelf — Conventions du projet
+# GameShelf — Project conventions
 
-## Le projet en une phrase
-Application web de gestion de backlog de jeux vidéo : rechercher des jeux via l'API RAWG, les ajouter à sa bibliothèque avec un statut, les noter, et visualiser des statistiques sur sa collection.
+## The project in one sentence
+A web app to manage a video game backlog: search games through the RAWG API, add them to a personal library with a status, rate them, and visualize statistics about the collection.
 
-## Contexte important
-Le propriétaire du projet est un développeur junior en formation (React en cours d'apprentissage : props, state, hooks de base). Ce projet est un projet portfolio construit en collaboration avec Claude Code. Conséquences :
-- Écris du code **simple et lisible** plutôt que malin ou ultra-optimisé.
-- Privilégie les patterns React standards et modernes (composants fonctionnels + hooks).
-- Ajoute des commentaires en français sur les parties non triviales (fetch, debounce, localStorage).
-- Quand tu introduis un concept nouveau (custom hook, useEffect complexe), explique-le brièvement dans ta réponse.
+## Important context
+The project owner is a junior developer in training (currently learning React: props, state, basic hooks). His native language is French. This is a portfolio project built in collaboration with Claude Code. Consequences:
+- Write code that is **simple and readable** rather than clever or over-optimized.
+- Stick to standard, modern React patterns (functional components + hooks).
+- Write code comments in English, but keep them beginner-friendly on non-trivial parts (fetch, debounce, localStorage).
+- When you introduce a new concept (custom hook, complex useEffect), briefly explain it in French in your chat response.
 
-## Stack technique (ne pas en dévier sans demander)
-- **Vite + React** (JavaScript, PAS TypeScript)
-- **Tailwind CSS + DaisyUI** pour le style
-- **Recharts** pour les graphiques de la page stats
-- **localStorage** pour la persistance (pas de backend en v1)
-- API externe : **RAWG** (https://api.rawg.io/api)
+## Tech stack (do not deviate without asking)
+- **Vite + React** (JavaScript, NOT TypeScript)
+- **Tailwind CSS + DaisyUI** for styling
+- **Recharts** for the stats page charts
+- **localStorage** for persistence (no backend in v1)
+- External API: **RAWG** (https://api.rawg.io/api)
 
-## Interdits
-- Pas de TypeScript, pas de Redux/Zustand, pas de backend, pas de CSS-in-JS.
-- Pas de dépendance supplémentaire sans justification explicite.
-- Ne jamais commiter le fichier `.env` (il contient la clé API RAWG).
+## Hard rules
+- No TypeScript, no Redux/Zustand, no backend, no CSS-in-JS.
+- No additional dependency without explicit justification.
+- Never commit the `.env` file (it contains the RAWG API key).
+- **All user-facing UI text is in French** (product choice). Everything else — code, comments, commits, docs — is in English.
 
-## API RAWG
-- La clé est dans `.env` : `VITE_RAWG_API_KEY` (accès via `import.meta.env.VITE_RAWG_API_KEY`).
-- `.env` est dans le `.gitignore` ; fournir un `.env.example` avec une valeur factice.
-- Toute page affichant des données RAWG doit contenir la mention « Data by RAWG » avec un lien vers https://rawg.io (obligation de la licence gratuite).
-- Gérer proprement les états de chargement et d'erreur sur chaque appel API.
+## RAWG API
+- The key lives in `.env` as `VITE_RAWG_API_KEY` (accessed via `import.meta.env.VITE_RAWG_API_KEY`).
+- `.env` is gitignored; provide a `.env.example` with a placeholder value.
+- Every page displaying RAWG data must show "Data by RAWG" with a link to https://rawg.io (free-tier license requirement).
+- Handle loading and error states properly on every API call.
 
-## Structure du code
-- Composants dans `src/components/`, un composant par fichier.
-- Les appels API regroupés dans `src/api/rawg.js`.
-- La logique localStorage regroupée dans `src/hooks/useLibrary.js`.
-- Interface utilisateur en français.
+## Code structure
+- Components in `src/components/`, one component per file.
+- API calls grouped in `src/api/rawg.js`.
+- localStorage logic grouped in `src/hooks/useLibrary.js`.
 
 ## Git
-- Commits petits et fréquents, un par fonctionnalité ou correction.
-- Messages de commit en anglais, format conventionnel : `feat: add game search`, `fix: ...`, `style: ...`, `docs: ...`.
-- Ne jamais commiter `node_modules` ni `.env`.
+- Small, frequent commits: one per feature or fix.
+- Commit messages in English, conventional format: `feat: add game search`, `fix: ...`, `style: ...`, `docs: ...`.
+- Never commit `node_modules` or `.env`.
 
-## Commandes
-- `npm run dev` — serveur de développement
-- `npm run build` — build de production
+## Commands
+- `npm run dev` — development server
+- `npm run build` — production build
 
-## Méthode de travail
-- Suivre SPEC.md étape par étape. Ne pas implémenter plusieurs étapes d'un coup.
-- À la fin de chaque étape : vérifier que l'app tourne, puis proposer un commit.
+## Workflow
+- Follow SPEC.md step by step. Never implement several steps at once.
+- At the end of each step: check the app runs, then propose a commit.

@@ -5,7 +5,7 @@ function Header() {
         <span className="text-xl font-bold text-primary">🎮 GameShelf</span>
       </div>
       <div className="flex-none w-full max-w-xs">
-        {/* Barre de recherche : câblée à l'API RAWG à l'étape 2 */}
+        {/* Search bar: wired to the RAWG API in step 2 */}
         <input
           type="search"
           placeholder="Rechercher un jeu..."
