@@ -34,15 +34,28 @@ The project owner is a junior developer in training (currently learning React: p
 - API calls grouped in `src/api/rawg.js`.
 - localStorage logic grouped in `src/hooks/useLibrary.js`.
 
+## Testing
+- Test framework: Vitest + React Testing Library (jsdom environment).
+- Test behavior and logic, not implementation details: the `useLibrary` hook, `src/api/rawg.js` (with a mocked fetch), filtering/sorting logic.
+- Acceptance criteria in SPEC.md (Given/When/Then) are the reference for what to test.
+- From step 3 onwards, every step includes tests for the logic it introduces.
+- All tests must pass before proposing a commit. Command: `npm test`.
+- CI: a GitHub Actions workflow runs the tests on every push and pull request.
+
 ## Git
 - Small, frequent commits: one per feature or fix.
-- Commit messages in English, conventional format: `feat: add game search`, `fix: ...`, `style: ...`, `docs: ...`.
+- Commit messages in English, conventional format: `feat: add game search`, `fix: ...`, `style: ...`, `docs: ...`, `chore: ...`, `test: ...`.
 - Never commit `node_modules` or `.env`.
+- One branch per spec step, created from an up-to-date `main`, named `feat/<short-name>` (or `chore/<short-name>` for technical steps).
+- Never commit feature work directly on `main`: it is merged through a GitHub pull request.
+- After a PR is merged, switch back to `main` and pull before starting the next step.
 
 ## Commands
 - `npm run dev` — development server
+- `npm test` — run the test suite
 - `npm run build` — production build
 
 ## Workflow
 - Follow SPEC.md step by step. Never implement several steps at once.
-- At the end of each step: check the app runs, then propose a commit.
+- At the start of each step: create the feature branch.
+- At the end of each step: make sure the app runs and all tests pass, commit, push the branch, and give me a suggested PR title and description.
