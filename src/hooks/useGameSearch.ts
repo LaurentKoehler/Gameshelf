@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react'
 import { searchGames } from '../api/rawg'
 import { useDebounce } from './useDebounce'
+import type { SearchResult } from '../types'
 
 const DEBOUNCE_DELAY = 400
 
 // Searches RAWG games as the user types. The query is debounced, and a stale
 // request (from a previous keystroke) is aborted if a newer one starts.
-export function useGameSearch(query) {
+export function useGameSearch(query: string) {
   const debouncedQuery = useDebounce(query, DEBOUNCE_DELAY)
-  const [results, setResults] = useState([])
+  const [results, setResults] = useState<SearchResult[]>([])
   const [fetching, setFetching] = useState(false)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
     const trimmedQuery = debouncedQuery.trim()

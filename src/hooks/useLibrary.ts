@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import type { Game, GameStatus, SearchResult } from '../types'
 
 const STORAGE_KEY = 'gameshelf-library'
 
@@ -6,18 +7,18 @@ const STORAGE_KEY = 'gameshelf-library'
 // survives page reloads. The library is loaded once on mount (lazy initial
 // state) and re-saved every time it changes.
 export function useLibrary() {
-  const [library, setLibrary] = useState(readLibrary)
+  const [library, setLibrary] = useState<Game[]>(readLibrary)
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(library))
   }, [library])
 
-  function addGame(game, status) {
+  function addGame(game: SearchResult, status: GameStatus) {
     setLibrary((current) => {
       const alreadyThere = current.some((entry) => entry.id === game.id)
       if (alreadyThere) return current
 
-      const newEntry = {
+      const newEntry: Game = {
         id: game.id,
         title: game.title,
         cover: game.cover,
@@ -34,14 +35,14 @@ export function useLibrary() {
     })
   }
 
-  function isInLibrary(id) {
+  function isInLibrary(id: number) {
     return library.some((entry) => entry.id === id)
   }
 
   return { library, addGame, isInLibrary }
 }
 
-function readLibrary() {
+function readLibrary(): Game[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     return raw ? JSON.parse(raw) : []

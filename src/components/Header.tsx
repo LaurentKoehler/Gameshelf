@@ -1,14 +1,19 @@
 import { useState } from 'react'
 import { useGameSearch } from '../hooks/useGameSearch'
+import type { SearchResult } from '../types'
 
-function Header({ onSelectGame }) {
+interface HeaderProps {
+  onSelectGame: (game: SearchResult) => void
+}
+
+function Header({ onSelectGame }: HeaderProps) {
   const [query, setQuery] = useState('')
   const [isFocused, setIsFocused] = useState(false)
   const { results, loading, error } = useGameSearch(query)
 
   const showDropdown = isFocused && query.trim() !== ''
 
-  function handleSelect(game) {
+  function handleSelect(game: SearchResult) {
     onSelectGame(game)
     setQuery('')
   }
