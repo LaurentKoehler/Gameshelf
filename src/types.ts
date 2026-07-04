@@ -10,6 +10,12 @@ export const STATUSES: { value: GameStatus; label: string }[] = [
   { value: 'dropped', label: 'Abandonné' },
 ]
 
+// Looks up a status's French label. STATUSES covers every GameStatus value,
+// so the lookup always finds a match.
+export function getStatusLabel(status: GameStatus): string {
+  return STATUSES.find((option) => option.value === status)!.label
+}
+
 // "Relancé" (replaying) can only be reached from "Terminé" (finished): it's
 // hidden from the picker for any other current status. It stays visible once
 // a game is already "Relancé", so the <select> can keep showing that value.

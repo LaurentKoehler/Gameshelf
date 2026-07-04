@@ -1,15 +1,6 @@
 import type { ChangeEvent } from 'react'
-import { getAvailableStatuses, hasFinishedOnceMention } from '../types'
+import { getAvailableStatuses, getStatusLabel, hasFinishedOnceMention } from '../types'
 import type { Game, GameStatus } from '../types'
-
-const STATUS_LABELS: Record<GameStatus, string> = {
-  wishlist: 'Wishlist',
-  backlog: 'À faire',
-  playing: 'En cours',
-  finished: 'Terminé',
-  replaying: 'Relancé',
-  dropped: 'Abandonné',
-}
 
 const STATUS_BADGE_CLASSES: Record<GameStatus, string> = {
   wishlist: 'badge-info',
@@ -58,7 +49,7 @@ function GameCard({ game, onUpdateStatus, onSetRating, onDelete }: GameCardProps
       <div className="card-body gap-2 p-4">
         <h3 className="card-title text-base">{game.title}</h3>
         <span className={`badge w-fit ${STATUS_BADGE_CLASSES[game.status]}`}>
-          {STATUS_LABELS[game.status]}
+          {getStatusLabel(game.status)}
         </span>
         {hasFinishedOnceMention(game) && (
           <p className="text-xs text-base-content/60">Déjà terminé une fois</p>
