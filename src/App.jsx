@@ -2,13 +2,15 @@ import { useState } from 'react'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import GameModal from './components/GameModal'
+import GameCard from './components/GameCard'
+import { useLibrary } from './hooks/useLibrary'
 
 function App() {
   const [selectedGame, setSelectedGame] = useState(null)
+  const { library, addGame, isInLibrary } = useLibrary()
 
   function handleAddGame(game, status) {
-    // TODO (step 3): persist the game to the library via useLibrary
-    console.log('Adding game (persistence arrives in step 3):', game.title, status)
+    addGame(game, status)
     setSelectedGame(null)
   }
 
@@ -17,15 +19,27 @@ function App() {
       <Header onSelectGame={setSelectedGame} />
 
       <main className="flex-1 container mx-auto px-4 py-8">
-        {/* The game library will be displayed here (step 3) */}
-        <p className="text-center text-base-content/60">
-          La bibliothèque de jeux arrivera bientôt.
-        </p>
+        {library.length === 0 ? (
+          <p className="text-center text-base-content/60">
+            Ta bibliothèque est vide. Recherche un jeu pour l'ajouter !
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {library.map((game) => (
+              <GameCard key={game.id} game={game} />
+            ))}
+          </div>
+        )}
       </main>
 
       <Footer />
 
-      <GameModal game={selectedGame} onClose={() => setSelectedGame(null)} onAdd={handleAddGame} />
+      <GameModal
+        game={selectedGame}
+        alreadyInLibrary={selectedGame ? isInLibrary(selectedGame.id) : false}
+        onClose={() => setSelectedGame(null)}
+        onAdd={handleAddGame}
+      />
     </div>
   )
 }
