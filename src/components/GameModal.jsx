@@ -8,7 +8,7 @@ const STATUSES = [
   { value: 'dropped', label: 'Abandonné' },
 ]
 
-function GameModal({ game, onClose, onAdd }) {
+function GameModal({ game, alreadyInLibrary, onClose, onAdd }) {
   const [status, setStatus] = useState(STATUSES[0].value)
 
   if (!game) return null
@@ -40,31 +40,37 @@ function GameModal({ game, onClose, onAdd }) {
           <p className="mt-1 text-sm text-base-content/70">Metacritic : {game.metacritic}</p>
         )}
 
-        <div className="form-control mt-4">
-          <label className="label" htmlFor="game-status">
-            <span className="label-text">Statut</span>
-          </label>
-          <select
-            id="game-status"
-            className="select select-bordered"
-            value={status}
-            onChange={(event) => setStatus(event.target.value)}
-          >
-            {STATUSES.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        {!alreadyInLibrary && (
+          <div className="form-control mt-4">
+            <label className="label" htmlFor="game-status">
+              <span className="label-text">Statut</span>
+            </label>
+            <select
+              id="game-status"
+              className="select select-bordered"
+              value={status}
+              onChange={(event) => setStatus(event.target.value)}
+            >
+              {STATUSES.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className="modal-action">
           <button type="button" className="btn" onClick={onClose}>
-            Annuler
+            {alreadyInLibrary ? 'Fermer' : 'Annuler'}
           </button>
-          <button type="button" className="btn btn-primary" onClick={() => onAdd(game, status)}>
-            Ajouter
-          </button>
+          {alreadyInLibrary ? (
+            <span className="btn btn-disabled">Déjà dans la bibliothèque</span>
+          ) : (
+            <button type="button" className="btn btn-primary" onClick={() => onAdd(game, status)}>
+              Ajouter
+            </button>
+          )}
         </div>
       </div>
     </div>
