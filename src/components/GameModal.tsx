@@ -1,13 +1,6 @@
 import { useState } from 'react'
+import { STATUSES } from '../types'
 import type { GameStatus, SearchResult } from '../types'
-
-const STATUSES: { value: GameStatus; label: string }[] = [
-  { value: 'wishlist', label: 'Wishlist' },
-  { value: 'backlog', label: 'À faire' },
-  { value: 'playing', label: 'En cours' },
-  { value: 'finished', label: 'Terminé' },
-  { value: 'dropped', label: 'Abandonné' },
-]
 
 interface GameModalProps {
   game: SearchResult | null

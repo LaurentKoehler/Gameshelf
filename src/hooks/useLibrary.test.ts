@@ -88,4 +88,80 @@ describe('useLibrary', () => {
     expect(result.current.library).toHaveLength(1)
     expect(result.current.library[0].status).toBe('finished')
   })
+
+  it('updates a game status and persists the change', () => {
+    const { result } = renderHook(() => useLibrary())
+
+    act(() => {
+      result.current.addGame(sampleGame, 'backlog')
+    })
+    act(() => {
+      result.current.updateStatus(sampleGame.id, 'playing')
+    })
+
+    expect(result.current.library[0].status).toBe('playing')
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)!)
+    expect(stored[0].status).toBe('playing')
+  })
+
+  it('sets finishedAt automatically when a game becomes finished', () => {
+    const { result } = renderHook(() => useLibrary())
+    const today = new Date().toISOString().slice(0, 10)
+
+    act(() => {
+      result.current.addGame(sampleGame, 'playing')
+    })
+    act(() => {
+      result.current.updateStatus(sampleGame.id, 'finished')
+    })
+
+    expect(result.current.library[0].finishedAt).toBe(today)
+  })
+
+  it('does not touch finishedAt when moving between non-finished statuses', () => {
+    const { result } = renderHook(() => useLibrary())
+
+    act(() => {
+      result.current.addGame(sampleGame, 'backlog')
+    })
+    act(() => {
+      result.current.updateStatus(sampleGame.id, 'playing')
+    })
+
+    expect(result.current.library[0].finishedAt).toBeNull()
+  })
+
+  it('sets and clears a game rating', () => {
+    const { result } = renderHook(() => useLibrary())
+
+    act(() => {
+      result.current.addGame(sampleGame, 'playing')
+    })
+    act(() => {
+      result.current.setRating(sampleGame.id, 8)
+    })
+
+    expect(result.current.library[0].rating).toBe(8)
+
+    act(() => {
+      result.current.setRating(sampleGame.id, null)
+    })
+
+    expect(result.current.library[0].rating).toBeNull()
+  })
+
+  it('deletes a game from the library and persists the removal', () => {
+    const { result } = renderHook(() => useLibrary())
+
+    act(() => {
+      result.current.addGame(sampleGame, 'backlog')
+    })
+    act(() => {
+      result.current.deleteGame(sampleGame.id)
+    })
+
+    expect(result.current.library).toEqual([])
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)!)
+    expect(stored).toEqual([])
+  })
 })

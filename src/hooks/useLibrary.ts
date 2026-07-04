@@ -39,7 +39,33 @@ export function useLibrary() {
     return library.some((entry) => entry.id === id)
   }
 
-  return { library, addGame, isInLibrary }
+  function updateStatus(id: number, status: GameStatus) {
+    setLibrary((current) =>
+      current.map((entry) => {
+        if (entry.id !== id) return entry
+
+        // finishedAt is set automatically the moment a game becomes "finished".
+        const becameFinished = status === 'finished' && entry.status !== 'finished'
+        return {
+          ...entry,
+          status,
+          finishedAt: becameFinished ? new Date().toISOString().slice(0, 10) : entry.finishedAt,
+        }
+      }),
+    )
+  }
+
+  function setRating(id: number, rating: number | null) {
+    setLibrary((current) =>
+      current.map((entry) => (entry.id === id ? { ...entry, rating } : entry)),
+    )
+  }
+
+  function deleteGame(id: number) {
+    setLibrary((current) => current.filter((entry) => entry.id !== id))
+  }
+
+  return { library, addGame, isInLibrary, updateStatus, setRating, deleteGame }
 }
 
 function readLibrary(): Game[] {
