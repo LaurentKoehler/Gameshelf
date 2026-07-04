@@ -4,21 +4,23 @@
 Every gamer has a "pile of shame": games bought but never launched, games started but never finished. GameShelf helps take back control: search any game, add it to a personal library with a status, rate it, and visualize statistics about the collection.
 
 ## Data model
-A game in the library (stored in localStorage under the key `gameshelf-library`):
+A game in the library (stored in localStorage under the key `gameshelf-library`), typed in `src/types.ts`:
 
-```js
-{
-  id: 3498,                    // RAWG id
-  title: "Elden Ring",
-  cover: "https://...",        // RAWG background_image
-  released: "2022-02-25",
-  genres: ["Action", "RPG"],   // RAWG genre names
-  platforms: ["PC", "PS5"],    // parent platform names
-  metacritic: 96,              // can be null
-  status: "playing",           // "wishlist" | "backlog" | "playing" | "finished" | "dropped"
-  rating: 9,                   // personal rating 1-10, null if unrated
-  addedAt: "2026-07-03",       // date added
-  finishedAt: null             // date the status became "finished", otherwise null
+```ts
+export type GameStatus = 'wishlist' | 'backlog' | 'playing' | 'finished' | 'dropped'
+
+export interface Game {
+  id: number                // RAWG id
+  title: string
+  cover: string | null      // RAWG background_image
+  released: string | null
+  genres: string[]          // RAWG genre names
+  platforms: string[]       // parent platform names
+  metacritic: number | null
+  status: GameStatus
+  rating: number | null     // personal rating 1-10, null if unrated
+  addedAt: string           // date added
+  finishedAt: string | null // date the status became "finished", otherwise null
 }
 ```
 

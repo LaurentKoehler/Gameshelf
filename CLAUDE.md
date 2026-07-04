@@ -11,14 +11,15 @@ The project owner is a junior developer in training (currently learning React: p
 - When you introduce a new concept (custom hook, complex useEffect), briefly explain it in French in your chat response.
 
 ## Tech stack (do not deviate without asking)
-- **Vite + React** (JavaScript, NOT TypeScript)
+- **Vite + React + TypeScript**
 - **Tailwind CSS + DaisyUI** for styling
 - **Recharts** for the stats page charts
 - **localStorage** for persistence (no backend in v1)
 - External API: **RAWG** (https://api.rawg.io/api)
 
 ## Hard rules
-- No TypeScript, no Redux/Zustand, no backend, no CSS-in-JS.
+- TypeScript with simple, readable types (interfaces, unions, basic generics only — no type gymnastics). Explain any non-obvious TS concept in French in your chat response.
+- No Redux/Zustand, no backend, no CSS-in-JS.
 - No additional dependency without explicit justification.
 - Never commit the `.env` file (it contains the RAWG API key).
 - **All user-facing UI text is in French** (product choice). Everything else — code, comments, commits, docs — is in English.
@@ -31,8 +32,8 @@ The project owner is a junior developer in training (currently learning React: p
 
 ## Code structure
 - Components in `src/components/`, one component per file.
-- API calls grouped in `src/api/rawg.js`.
-- localStorage logic grouped in `src/hooks/useLibrary.js`.
+- API calls grouped in `src/api/rawg.ts`.
+- localStorage logic grouped in `src/hooks/useLibrary.ts`.
 
 ## Testing
 - Test framework: Vitest + React Testing Library (jsdom environment).
