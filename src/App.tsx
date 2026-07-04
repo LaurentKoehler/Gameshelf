@@ -8,7 +8,7 @@ import type { GameStatus, SearchResult } from './types'
 
 function App() {
   const [selectedGame, setSelectedGame] = useState<SearchResult | null>(null)
-  const { library, addGame, isInLibrary } = useLibrary()
+  const { library, addGame, isInLibrary, updateStatus, setRating, deleteGame } = useLibrary()
 
   function handleAddGame(game: SearchResult, status: GameStatus) {
     addGame(game, status)
@@ -27,7 +27,13 @@ function App() {
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {library.map((game) => (
-              <GameCard key={game.id} game={game} />
+              <GameCard
+                key={game.id}
+                game={game}
+                onUpdateStatus={updateStatus}
+                onSetRating={setRating}
+                onDelete={deleteGame}
+              />
             ))}
           </div>
         )}

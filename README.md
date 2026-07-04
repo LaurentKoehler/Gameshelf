@@ -4,7 +4,7 @@ A web app to manage a video game backlog: search games through the RAWG API, add
 
 ## Stack
 
-- Vite + React (JavaScript)
+- Vite + React + TypeScript
 - Tailwind CSS + DaisyUI
 - Recharts (coming soon)
 - localStorage for persistence

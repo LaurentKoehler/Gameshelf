@@ -107,7 +107,7 @@ Acceptance criteria:
 Git init, Vite + React, Tailwind + DaisyUI, base layout (header with search placeholder, content area, footer with "Data by RAWG" linking to rawg.io), dark theme, `.gitignore`, `.env.example`, minimal README.
 
 ### Step 2 — RAWG search (US-1, US-2)
-Search bar with debounce, results dropdown, loading/empty/error states, game detail modal, add to library with status.
+Search bar with debounce, results dropdown, loading/empty/error states, game detail modal, add to library with status (in-memory in this step; persistence came in step 3).
 
 ### Step 2b — Testing setup and CI
 - Install and configure Vitest + React Testing Library (jsdom environment), add an `npm test` script.
