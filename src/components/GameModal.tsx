@@ -2,6 +2,10 @@ import { useState } from 'react'
 import { STATUSES } from '../types'
 import type { GameStatus, SearchResult } from '../types'
 
+// A game being added has never been finished yet, so "Relancé" (only
+// reachable from "Terminé") isn't offered here.
+const ADDABLE_STATUSES = STATUSES.filter((option) => option.value !== 'replaying')
+
 interface GameModalProps {
   game: SearchResult | null
   alreadyInLibrary: boolean
@@ -10,7 +14,7 @@ interface GameModalProps {
 }
 
 function GameModal({ game, alreadyInLibrary, onClose, onAdd }: GameModalProps) {
-  const [status, setStatus] = useState<GameStatus>(STATUSES[0].value)
+  const [status, setStatus] = useState<GameStatus>(ADDABLE_STATUSES[0].value)
 
   if (!game) return null
 
@@ -52,7 +56,7 @@ function GameModal({ game, alreadyInLibrary, onClose, onAdd }: GameModalProps) {
               value={status}
               onChange={(event) => setStatus(event.target.value as GameStatus)}
             >
-              {STATUSES.map((option) => (
+              {ADDABLE_STATUSES.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>

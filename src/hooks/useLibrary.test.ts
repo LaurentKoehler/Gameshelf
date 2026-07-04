@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useLibrary } from './useLibrary'
 
@@ -16,6 +16,10 @@ const sampleGame = {
 
 beforeEach(() => {
   localStorage.clear()
+})
+
+afterEach(() => {
+  vi.useRealTimers()
 })
 
 describe('useLibrary', () => {
@@ -163,5 +167,47 @@ describe('useLibrary', () => {
     expect(result.current.library).toEqual([])
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)!)
     expect(stored).toEqual([])
+  })
+
+  it('keeps finishedAt untouched when a finished game is marked as replaying', () => {
+    const { result } = renderHook(() => useLibrary())
+    const today = new Date().toISOString().slice(0, 10)
+
+    act(() => {
+      result.current.addGame(sampleGame, 'playing')
+    })
+    act(() => {
+      result.current.updateStatus(sampleGame.id, 'finished')
+    })
+    act(() => {
+      result.current.updateStatus(sampleGame.id, 'replaying')
+    })
+
+    expect(result.current.library[0].status).toBe('replaying')
+    expect(result.current.library[0].finishedAt).toBe(today)
+  })
+
+  it('overwrites finishedAt when a replayed game is finished again', () => {
+    vi.setSystemTime(new Date('2026-01-01'))
+    const { result } = renderHook(() => useLibrary())
+
+    act(() => {
+      result.current.addGame(sampleGame, 'playing')
+    })
+    act(() => {
+      result.current.updateStatus(sampleGame.id, 'finished')
+    })
+    act(() => {
+      result.current.updateStatus(sampleGame.id, 'replaying')
+    })
+
+    expect(result.current.library[0].finishedAt).toBe('2026-01-01')
+
+    vi.setSystemTime(new Date('2026-03-15'))
+    act(() => {
+      result.current.updateStatus(sampleGame.id, 'finished')
+    })
+
+    expect(result.current.library[0].finishedAt).toBe('2026-03-15')
   })
 })

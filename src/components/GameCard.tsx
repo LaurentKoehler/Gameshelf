@@ -1,5 +1,5 @@
 import type { ChangeEvent } from 'react'
-import { STATUSES } from '../types'
+import { getAvailableStatuses, hasFinishedOnceMention } from '../types'
 import type { Game, GameStatus } from '../types'
 
 const STATUS_LABELS: Record<GameStatus, string> = {
@@ -7,6 +7,7 @@ const STATUS_LABELS: Record<GameStatus, string> = {
   backlog: 'À faire',
   playing: 'En cours',
   finished: 'Terminé',
+  replaying: 'Relancé',
   dropped: 'Abandonné',
 }
 
@@ -15,6 +16,7 @@ const STATUS_BADGE_CLASSES: Record<GameStatus, string> = {
   backlog: 'badge-neutral',
   playing: 'badge-primary',
   finished: 'badge-success',
+  replaying: 'badge-secondary',
   dropped: 'badge-error',
 }
 
@@ -58,6 +60,9 @@ function GameCard({ game, onUpdateStatus, onSetRating, onDelete }: GameCardProps
         <span className={`badge w-fit ${STATUS_BADGE_CLASSES[game.status]}`}>
           {STATUS_LABELS[game.status]}
         </span>
+        {hasFinishedOnceMention(game) && (
+          <p className="text-xs text-base-content/60">Déjà terminé une fois</p>
+        )}
 
         <select
           aria-label="Statut"
@@ -65,7 +70,7 @@ function GameCard({ game, onUpdateStatus, onSetRating, onDelete }: GameCardProps
           value={game.status}
           onChange={handleStatusChange}
         >
-          {STATUSES.map((option) => (
+          {getAvailableStatuses(game.status).map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>

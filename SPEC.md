@@ -7,7 +7,7 @@ Every gamer has a "pile of shame": games bought but never launched, games starte
 A game in the library (stored in localStorage under the key `gameshelf-library`), typed in `src/types.ts`:
 
 ```ts
-export type GameStatus = 'wishlist' | 'backlog' | 'playing' | 'finished' | 'dropped'
+export type GameStatus = 'wishlist' | 'backlog' | 'playing' | 'finished' | 'replaying' | 'dropped'
 
 export interface Game {
   id: number                // RAWG id
@@ -24,7 +24,7 @@ export interface Game {
 }
 ```
 
-French labels for statuses (UI is in French): Wishlist, À faire, En cours, Terminé, Abandonné.
+French labels for statuses (UI is in French): Wishlist, À faire, En cours, Terminé, Relancé, Abandonné.
 
 ---
 
@@ -77,11 +77,26 @@ Business rules:
 - Rating is optional and independent from the status.
 - Deleting a game removes it and its rating permanently (no archive in v1).
 
+### US-4b — Replay a finished game
+As a user, I want to mark a finished game as being replayed so that my library reflects that I'm playing it again.
+
+Acceptance criteria:
+- Given a game whose status is "Terminé", when I open its status picker, then "Relancé" appears as an available option.
+- Given a game whose status is not "Terminé", when I open its status picker, then "Relancé" is not offered — it can only be reached from "Terminé".
+- Given a game's status becomes "Relancé", when the change is saved, then `finishedAt` is left untouched (it keeps the date of the original completion).
+- Given a replayed game's status becomes "Terminé" again, when the change is saved, then `finishedAt` is overwritten with the new completion date.
+- Given a game has a `finishedAt` set but its current status is neither "Terminé" nor "Relancé" (e.g. it was moved to "Abandonné" or "À faire"), when I view its card, then the card shows "Déjà terminé une fois".
+
+Business rules:
+- "Relancé" is only reachable from "Terminé" in the status picker; this is enforced in the UI (the option isn't offered from any other status), not just assumed from the data.
+- `finishedAt` is never cleared once set. It is only ever overwritten, the next time the game is marked "Terminé" again. **Known v1 limitation**: GameShelf keeps a single completion date, so a game finished and replayed several times only remembers its most recent completion — full playthrough history is out of scope for v1.
+- The "Déjà terminé une fois" mention on a card is derived purely from `finishedAt` being set while `status` is neither `finished` nor `replaying` — no new field is stored for this.
+
 ### US-5 — Filter and sort the library
 As a user, I want to filter and sort my games so that I can find what to play next.
 
 Acceptance criteria:
-- Given my library is displayed, when I click a status filter (Tous / Wishlist / À faire / En cours / Terminés / Abandonnés), then only matching games are shown and each filter shows its count.
+- Given my library is displayed, when I click a status filter (Tous / Wishlist / À faire / En cours / Terminés / Relancés / Abandonnés), then only matching games are shown and each filter shows its count.
 - Given my library is displayed, when I pick a sort option (date added, alphabetical, personal rating, Metacritic), then the cards reorder accordingly.
 - Given genres exist in my library, when I pick a genre filter, then only games of that genre are shown.
 - Given active filters produce no game, when the list is empty, then an explicit "no games match" state is shown.
@@ -94,10 +109,14 @@ Business rules:
 As a user, I want statistics about my collection so that I can see my gaming habits at a glance.
 
 Acceptance criteria:
-- Given my library contains games, when I open the stats page, then I see: total games, games finished this year, games currently playing, and my average rating.
-- Given games were finished in the last 12 months, when I view the stats page, then a bar chart shows finished games per month.
+- Given my library contains games, when I open the stats page, then I see: total games, games finished this year, games currently playing (including "Relancé"), and my average rating.
+- Given games have a `finishedAt` in the last 12 months, when I view the stats page, then a bar chart shows finished games per month, counting every game by its `finishedAt` regardless of its current status.
 - Given my games have genres, when I view the stats page, then a donut chart shows the distribution by genre.
 - Given my library is empty, when I open the stats page, then an empty state explains that stats will appear once games are added.
+
+Business rules:
+- "Currently playing" counts both "En cours" and "Relancé" statuses.
+- The monthly finished chart is driven by `finishedAt`, not by the current status — a game later moved to "Abandonné" still counts in the month it was finished.
 
 ---
 
