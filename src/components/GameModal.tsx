@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import type { GameStatus, SearchResult } from '../types'
 
-const STATUSES = [
+const STATUSES: { value: GameStatus; label: string }[] = [
   { value: 'wishlist', label: 'Wishlist' },
   { value: 'backlog', label: 'À faire' },
   { value: 'playing', label: 'En cours' },
@@ -8,8 +9,15 @@ const STATUSES = [
   { value: 'dropped', label: 'Abandonné' },
 ]
 
-function GameModal({ game, alreadyInLibrary, onClose, onAdd }) {
-  const [status, setStatus] = useState(STATUSES[0].value)
+interface GameModalProps {
+  game: SearchResult | null
+  alreadyInLibrary: boolean
+  onClose: () => void
+  onAdd: (game: SearchResult, status: GameStatus) => void
+}
+
+function GameModal({ game, alreadyInLibrary, onClose, onAdd }: GameModalProps) {
+  const [status, setStatus] = useState<GameStatus>(STATUSES[0].value)
 
   if (!game) return null
 
@@ -49,7 +57,7 @@ function GameModal({ game, alreadyInLibrary, onClose, onAdd }) {
               id="game-status"
               className="select select-bordered"
               value={status}
-              onChange={(event) => setStatus(event.target.value)}
+              onChange={(event) => setStatus(event.target.value as GameStatus)}
             >
               {STATUSES.map((option) => (
                 <option key={option.value} value={option.value}>

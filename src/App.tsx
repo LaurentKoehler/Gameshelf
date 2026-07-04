@@ -4,12 +4,13 @@ import Footer from './components/Footer'
 import GameModal from './components/GameModal'
 import GameCard from './components/GameCard'
 import { useLibrary } from './hooks/useLibrary'
+import type { GameStatus, SearchResult } from './types'
 
 function App() {
-  const [selectedGame, setSelectedGame] = useState(null)
+  const [selectedGame, setSelectedGame] = useState<SearchResult | null>(null)
   const { library, addGame, isInLibrary } = useLibrary()
 
-  function handleAddGame(game, status) {
+  function handleAddGame(game: SearchResult, status: GameStatus) {
     addGame(game, status)
     setSelectedGame(null)
   }

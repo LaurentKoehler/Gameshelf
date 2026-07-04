@@ -72,7 +72,7 @@ describe('useLibrary', () => {
       result.current.addGame(sampleGame, 'backlog')
     })
 
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY))
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)!)
     expect(stored).toHaveLength(1)
     expect(stored[0].id).toBe(sampleGame.id)
   })

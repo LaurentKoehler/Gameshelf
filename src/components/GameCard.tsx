@@ -1,4 +1,6 @@
-const STATUS_LABELS = {
+import type { Game, GameStatus } from '../types'
+
+const STATUS_LABELS: Record<GameStatus, string> = {
   wishlist: 'Wishlist',
   backlog: 'À faire',
   playing: 'En cours',
@@ -6,7 +8,7 @@ const STATUS_LABELS = {
   dropped: 'Abandonné',
 }
 
-const STATUS_BADGE_CLASSES = {
+const STATUS_BADGE_CLASSES: Record<GameStatus, string> = {
   wishlist: 'badge-info',
   backlog: 'badge-neutral',
   playing: 'badge-primary',
@@ -14,7 +16,11 @@ const STATUS_BADGE_CLASSES = {
   dropped: 'badge-error',
 }
 
-function GameCard({ game }) {
+interface GameCardProps {
+  game: Game
+}
+
+function GameCard({ game }: GameCardProps) {
   return (
     <div className="card bg-base-200 shadow">
       <figure className="h-40 bg-base-300">
