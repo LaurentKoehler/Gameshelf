@@ -49,15 +49,16 @@ function GameCard({ game, onUpdateStatus, onSetRating, onDelete }: GameCardProps
         <span className={`badge w-fit ${getStatusBadgeClass(game.status)}`}>
           {getStatusLabel(game.status)}
         </span>
-        {shouldShowCompletionDate(game) && game.finishedAt && (
-          <p className="text-xs text-base-content/60">Terminé le {formatDate(game.finishedAt)}</p>
-        )}
-        {hasFinishedOnceMention(game) && game.finishedAt && (
-          <p className="text-xs text-base-content/60">
-            Déjà terminé une fois ({formatDate(game.finishedAt)})
-          </p>
-        )}
-
+          <div className='min-h-6'> 
+            {shouldShowCompletionDate(game) && game.finishedAt && (
+            <p className="text-xs text-base-content/60">Terminé le {formatDate(game.finishedAt)}</p>
+              )}
+             {hasFinishedOnceMention(game) && game.finishedAt && (
+             <p className="text-xs text-base-content/60">
+              Déjà terminé une fois ({formatDate(game.finishedAt)})
+            </p>
+            )}
+          </div>
         <select
           aria-label="Statut"
           className="select select-bordered select-sm"
