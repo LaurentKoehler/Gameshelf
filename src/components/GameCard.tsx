@@ -1,5 +1,11 @@
 import type { ChangeEvent } from 'react'
-import { getAvailableStatuses, getStatusLabel, hasFinishedOnceMention } from '../types'
+import {
+  formatDate,
+  getAvailableStatuses,
+  getStatusLabel,
+  hasFinishedOnceMention,
+  shouldShowCompletionDate,
+} from '../types'
 import type { Game, GameStatus } from '../types'
 
 const STATUS_BADGE_CLASSES: Record<GameStatus, string> = {
@@ -51,8 +57,13 @@ function GameCard({ game, onUpdateStatus, onSetRating, onDelete }: GameCardProps
         <span className={`badge w-fit ${STATUS_BADGE_CLASSES[game.status]}`}>
           {getStatusLabel(game.status)}
         </span>
-        {hasFinishedOnceMention(game) && (
-          <p className="text-xs text-base-content/60">Déjà terminé une fois</p>
+        {shouldShowCompletionDate(game) && game.finishedAt && (
+          <p className="text-xs text-base-content/60">Terminé le {formatDate(game.finishedAt)}</p>
+        )}
+        {hasFinishedOnceMention(game) && game.finishedAt && (
+          <p className="text-xs text-base-content/60">
+            Déjà terminé une fois ({formatDate(game.finishedAt)})
+          </p>
         )}
 
         <select
