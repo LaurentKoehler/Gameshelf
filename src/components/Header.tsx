@@ -20,7 +20,10 @@ function Header({ onSelectGame }: HeaderProps) {
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    if (event.key === 'Escape') setIsFocused(false)
+    // Blur (rather than just flipping isFocused) so the input's real focus
+    // state stays in sync: otherwise a click while it's already focused
+    // wouldn't re-fire onFocus, and the dropdown could never reopen.
+    if (event.key === 'Escape') event.currentTarget.blur()
   }
 
   return (

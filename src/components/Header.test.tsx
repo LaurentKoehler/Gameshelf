@@ -27,9 +27,11 @@ beforeEach(() => {
 describe('Header', () => {
   it('closes the search dropdown when Escape is pressed (US-1)', async () => {
     render(<Header onSelectGame={vi.fn()} />)
-    const input = screen.getByPlaceholderText('Rechercher un jeu...')
+    const input: HTMLInputElement = screen.getByPlaceholderText('Rechercher un jeu...')
 
-    fireEvent.focus(input)
+    // A real .focus() call (not fireEvent.focus, which doesn't update jsdom's
+    // activeElement) so the later Escape can genuinely blur the input.
+    input.focus()
     fireEvent.change(input, { target: { value: 'ze' } })
 
     expect(await screen.findByText('Zelda')).toBeInTheDocument()
