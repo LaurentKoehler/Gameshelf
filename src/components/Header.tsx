@@ -29,8 +29,8 @@ function Header({ onSelectGame, currentView, onNavigate }: HeaderProps) {
   }
 
   return (
-    <header className="navbar bg-base-200 px-4 md:px-8">
-      <div className="flex flex-1 items-center gap-6">
+    <header className="navbar flex-wrap gap-2 bg-base-200 px-4 py-2 md:px-8">
+      <div className="flex flex-1 flex-wrap items-center gap-4 sm:gap-6">
         <span className="text-xl font-bold text-primary">🎮 GameShelf</span>
 
         <nav className="flex gap-2">
@@ -51,7 +51,7 @@ function Header({ onSelectGame, currentView, onNavigate }: HeaderProps) {
         </nav>
       </div>
 
-      <div className="relative flex-none w-full max-w-xs">
+      <div className="relative w-full flex-none sm:w-auto sm:max-w-xs">
         <input
           type="search"
           placeholder="Rechercher un jeu..."
