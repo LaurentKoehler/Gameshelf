@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { KeyboardEvent } from 'react'
 import { MIN_QUERY_LENGTH, useGameSearch } from '../hooks/useGameSearch'
 import type { SearchResult } from '../types'
 
@@ -18,6 +19,10 @@ function Header({ onSelectGame }: HeaderProps) {
     setQuery('')
   }
 
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === 'Escape') setIsFocused(false)
+  }
+
   return (
     <header className="navbar bg-base-200 px-4 md:px-8">
       <div className="flex-1">
@@ -32,6 +37,7 @@ function Header({ onSelectGame }: HeaderProps) {
           onChange={(event) => setQuery(event.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          onKeyDown={handleKeyDown}
           className="input input-bordered w-full"
         />
 
