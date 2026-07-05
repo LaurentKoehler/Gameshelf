@@ -33,7 +33,11 @@ export function useGameSearch(query: string) {
       .catch((err) => {
         if (err.name !== 'AbortError') setError(err)
       })
-      .finally(() => setFetching(false))
+      .finally(() => {
+        // A stale (aborted) request settling later must not clear the
+        // loading state of the newer request that superseded it.
+        if (!controller.signal.aborted) setFetching(false)
+      })
 
     return () => controller.abort()
   }, [debouncedQuery])
