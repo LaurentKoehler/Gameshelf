@@ -5,7 +5,9 @@ import GameModal from './components/GameModal'
 import GameCard from './components/GameCard'
 import FilterBar from './components/FilterBar'
 import StatsPage from './components/StatsPage'
+import Toast from './components/Toast'
 import { useLibrary } from './hooks/useLibrary'
+import { useToast } from './hooks/useToast'
 import { countByStatus, getAvailableGenres, selectGames } from './filters'
 import type { SortOption, StatusFilter } from './filters'
 import type { GameStatus, SearchResult, View } from './types'
@@ -17,10 +19,18 @@ function App() {
   const [sortBy, setSortBy] = useState<SortOption>('addedAt')
   const [view, setView] = useState<View>('library')
   const { library, addGame, isInLibrary, updateStatus, setRating, deleteGame } = useLibrary()
+  const { message: toastMessage, showToast } = useToast()
 
   function handleAddGame(game: SearchResult, status: GameStatus) {
     addGame(game, status)
     setSelectedGame(null)
+    showToast(`« ${game.title} » ajouté à la bibliothèque.`)
+  }
+
+  function handleDeleteGame(id: number) {
+    const game = library.find((entry) => entry.id === id)
+    deleteGame(id)
+    if (game) showToast(`« ${game.title} » supprimé de la bibliothèque.`)
   }
 
   const visibleGames = selectGames(library, { status: statusFilter, genre: genreFilter, sortBy })
@@ -61,7 +71,7 @@ function App() {
                     game={game}
                     onUpdateStatus={updateStatus}
                     onSetRating={setRating}
-                    onDelete={deleteGame}
+                    onDelete={handleDeleteGame}
                   />
                 ))}
               </div>
@@ -78,6 +88,8 @@ function App() {
         onClose={() => setSelectedGame(null)}
         onAdd={handleAddGame}
       />
+
+      <Toast message={toastMessage} />
     </div>
   )
 }
