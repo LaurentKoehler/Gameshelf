@@ -49,18 +49,18 @@ function GameCard({ game, onUpdateStatus, onSetRating, onDelete }: GameCardProps
         <span className={`badge w-fit ${getStatusBadgeClass(game.status)}`}>
           {getStatusLabel(game.status)}
         </span>
-          <div className='min-h-6'> 
-            {shouldShowCompletionDate(game) && game.finishedAt && (
+        <div className="min-h-6">
+          {shouldShowCompletionDate(game) && game.finishedAt && (
             <p className="text-xs text-base-content/60">Terminé le {formatDate(game.finishedAt)}</p>
-              )}
-             {hasFinishedOnceMention(game) && game.finishedAt && (
-             <p className="text-xs text-base-content/60">
+          )}
+          {hasFinishedOnceMention(game) && game.finishedAt && (
+            <p className="text-xs text-base-content/60">
               Déjà terminé une fois ({formatDate(game.finishedAt)})
             </p>
-            )}
-          </div>
+          )}
+        </div>
         <select
-          aria-label="Statut"
+          aria-label={`Statut de ${game.title}`}
           className="select select-bordered select-sm"
           value={game.status}
           onChange={handleStatusChange}
@@ -73,7 +73,7 @@ function GameCard({ game, onUpdateStatus, onSetRating, onDelete }: GameCardProps
         </select>
 
         <select
-          aria-label="Note"
+          aria-label={`Note de ${game.title}`}
           className="select select-bordered select-sm"
           value={game.rating ?? ''}
           onChange={handleRatingChange}
@@ -86,7 +86,12 @@ function GameCard({ game, onUpdateStatus, onSetRating, onDelete }: GameCardProps
           ))}
         </select>
 
-        <button type="button" className="btn btn-error btn-sm" onClick={handleDelete}>
+        <button
+          type="button"
+          aria-label={`Supprimer ${game.title}`}
+          className="btn btn-error btn-sm"
+          onClick={handleDelete}
+        >
           Supprimer
         </button>
       </div>

@@ -69,6 +69,20 @@ describe('computeCounters', () => {
     const games = [makeGame({ id: 1, rating: null })]
     expect(computeCounters(games, NOW).averageRating).toBeNull()
   })
+
+  it('compares the current year in UTC, unaffected by the local timezone', () => {
+    const originalTZ = process.env.TZ
+    // UTC-8: this UTC instant is still Dec 31 2025 locally, but Jan 1 2026 in UTC.
+    process.env.TZ = 'America/Los_Angeles'
+    try {
+      const now = new Date('2026-01-01T03:00:00.000Z')
+      const games = [makeGame({ id: 1, finishedAt: '2026-01-01' })]
+
+      expect(computeCounters(games, now).finishedThisYear).toBe(1)
+    } finally {
+      process.env.TZ = originalTZ
+    }
+  })
 })
 
 describe('computeFinishedPerMonth', () => {

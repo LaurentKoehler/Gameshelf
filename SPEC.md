@@ -28,6 +28,25 @@ French labels for statuses (UI is in French): Wishlist, À faire, En cours, Term
 
 ---
 
+## Business rules
+These rules apply across the whole app, regardless of which user story exercises them. Story-specific notes stay inside their own US below.
+
+- Statuses are a closed list of six values: Wishlist, À faire, En cours, Terminé, Relancé, Abandonné (`wishlist` | `backlog` | `playing` | `finished` | `replaying` | `dropped`) — no other status exists.
+- A game can only exist once in the library (RAWG id is the unique key).
+- "Relancé" is only reachable from "Terminé" in the status picker; this is enforced in the UI (the option isn't offered from any other status), not just assumed from the data.
+- `finishedAt` is never cleared once set. It is only ever overwritten, the next time a game is marked "Terminé" again. **Known v1 limitation**: GameShelf keeps a single, most-recent completion date — a game finished and replayed several times only remembers its latest completion. Full playthrough history is out of scope for v1.
+- Rating is optional (1-10) and independent from the status.
+- The library persists between sessions (localStorage).
+
+### Technical notes
+Implementation details, not domain rules:
+
+- Search requests are debounced (~400 ms) to avoid one API call per keystroke.
+- Search queries the RAWG endpoint `GET /games?search=...&page_size=8`.
+- Dates are formatted DD/MM/YYYY via `Intl.DateTimeFormat('fr-FR')`, forced to UTC so a date doesn't shift by a day depending on the reader's timezone.
+
+---
+
 ## User stories
 
 ### US-1 — Search for a game
@@ -40,10 +59,6 @@ Acceptance criteria:
 - Given the RAWG API is unreachable, when the request fails, then a clear error message is shown (no crash, no silent failure).
 - Given the dropdown is open, when I click outside of it or press Escape, then it closes.
 
-Business rules:
-- Requests are debounced (~400 ms) to avoid one API call per keystroke.
-- Search queries the RAWG endpoint `GET /games?search=...&page_size=8`.
-
 ### US-2 — Add a game to the library
 As a user, I want to add a game from the search results with a status so that it enters my backlog.
 
@@ -53,9 +68,7 @@ Acceptance criteria:
 - Given a game is already in my library, when I open its detail modal from search, then the modal shows "Déjà dans la bibliothèque" instead of the add button.
 
 Business rules:
-- A game can only exist once in the library (RAWG id is the unique key).
 - Default status if none is picked: "backlog" (À faire).
-- The library persists between sessions (localStorage).
 
 ### US-3 — View my library
 As a user, I want to see all the games in my library so that I can get an overview of my backlog.
@@ -66,7 +79,6 @@ Acceptance criteria:
 - Given my library is empty, when I open the library page, then a friendly empty state invites me to search for a first game.
 
 Business rules:
-- Dates are formatted DD/MM/YYYY via `Intl.DateTimeFormat('fr-FR')`.
 - `addedAt` is never displayed; it only drives sorting.
 
 ### US-4 — Update a game
@@ -79,7 +91,6 @@ Acceptance criteria:
 - Given a game, when its status becomes "finished", then `finishedAt` is set to the current date automatically.
 
 Business rules:
-- Rating is optional and independent from the status.
 - Deleting a game removes it and its rating permanently (no archive in v1).
 
 ### US-4b — Replay a finished game
@@ -93,8 +104,6 @@ Acceptance criteria:
 - Given a game has a `finishedAt` set but its current status is neither "Terminé" nor "Relancé" (e.g. it was moved to "Abandonné" or "À faire"), when I view its card, then the card shows "Déjà terminé une fois (15/03/2026)".
 
 Business rules:
-- "Relancé" is only reachable from "Terminé" in the status picker; this is enforced in the UI (the option isn't offered from any other status), not just assumed from the data.
-- `finishedAt` is never cleared once set. It is only ever overwritten, the next time the game is marked "Terminé" again. **Known v1 limitation**: GameShelf keeps a single completion date, so a game finished and replayed several times only remembers its most recent completion — full playthrough history is out of scope for v1.
 - The "Déjà terminé une fois" mention on a card is derived purely from `finishedAt` being set while `status` is neither `finished` nor `replaying` — no new field is stored for this. Its date follows the same DD/MM/YYYY formatting as the "Terminé le" mention (US-3).
 
 ### US-5 — Filter and sort the library
