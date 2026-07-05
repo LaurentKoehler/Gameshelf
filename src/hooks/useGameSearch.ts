@@ -5,6 +5,9 @@ import type { SearchResult } from '../types'
 
 const DEBOUNCE_DELAY = 400
 
+// US-1: search only triggers from 2 characters onward.
+export const MIN_QUERY_LENGTH = 2
+
 // Searches RAWG games as the user types. The query is debounced, and a stale
 // request (from a previous keystroke) is aborted if a newer one starts.
 export function useGameSearch(query: string) {
@@ -15,7 +18,7 @@ export function useGameSearch(query: string) {
 
   useEffect(() => {
     const trimmedQuery = debouncedQuery.trim()
-    if (!trimmedQuery) {
+    if (trimmedQuery.length < MIN_QUERY_LENGTH) {
       setResults([])
       setError(null)
       return
@@ -30,7 +33,11 @@ export function useGameSearch(query: string) {
       .catch((err) => {
         if (err.name !== 'AbortError') setError(err)
       })
-      .finally(() => setFetching(false))
+      .finally(() => {
+        // A stale (aborted) request settling later must not clear the
+        // loading state of the newer request that superseded it.
+        if (!controller.signal.aborted) setFetching(false)
+      })
 
     return () => controller.abort()
   }, [debouncedQuery])
@@ -38,7 +45,8 @@ export function useGameSearch(query: string) {
   // The debounced value hasn't caught up with what's typed yet: the fetch
   // above hasn't even started. Counting this as loading too avoids briefly
   // flashing "no results" right after a keystroke.
-  const isWaitingForDebounce = query.trim() !== '' && query.trim() !== debouncedQuery.trim()
+  const isWaitingForDebounce =
+    query.trim().length >= MIN_QUERY_LENGTH && query.trim() !== debouncedQuery.trim()
   const loading = fetching || isWaitingForDebounce
 
   return { results, loading, error }
