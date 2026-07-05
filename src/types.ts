@@ -1,5 +1,8 @@
 export type GameStatus = 'wishlist' | 'backlog' | 'playing' | 'finished' | 'replaying' | 'dropped'
 
+// The app's two pages: the library grid and the stats page.
+export type View = 'library' | 'stats'
+
 // Shared list of statuses with their French label, used to populate <select> options.
 export const STATUSES: { value: GameStatus; label: string }[] = [
   { value: 'wishlist', label: 'Wishlist' },
