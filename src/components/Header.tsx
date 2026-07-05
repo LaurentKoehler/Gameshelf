@@ -1,7 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import { MIN_QUERY_LENGTH, useGameSearch } from '../hooks/useGameSearch'
 import type { SearchResult, View } from '../types'
+
+const SEARCH_RESULTS_ID = 'search-results'
+
+function optionId(gameId: number): string {
+  return `search-option-${gameId}`
+}
 
 interface HeaderProps {
   onSelectGame: (game: SearchResult) => void
@@ -12,9 +18,15 @@ interface HeaderProps {
 function Header({ onSelectGame, currentView, onNavigate }: HeaderProps) {
   const [query, setQuery] = useState('')
   const [isFocused, setIsFocused] = useState(false)
+  const [highlightedIndex, setHighlightedIndex] = useState(0)
   const { results, loading, error } = useGameSearch(query)
 
   const showDropdown = isFocused && query.trim().length >= MIN_QUERY_LENGTH
+
+  // A new set of results starts highlighted at the top.
+  useEffect(() => {
+    setHighlightedIndex(0)
+  }, [results])
 
   function handleSelect(game: SearchResult) {
     onSelectGame(game)
@@ -22,10 +34,27 @@ function Header({ onSelectGame, currentView, onNavigate }: HeaderProps) {
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    // Blur (rather than just flipping isFocused) so the input's real focus
-    // state stays in sync: otherwise a click while it's already focused
-    // wouldn't re-fire onFocus, and the dropdown could never reopen.
-    if (event.key === 'Escape') event.currentTarget.blur()
+    if (event.key === 'Escape') {
+      // Blur (rather than just flipping isFocused) so the input's real focus
+      // state stays in sync: otherwise a click while it's already focused
+      // wouldn't re-fire onFocus, and the dropdown could never reopen.
+      event.currentTarget.blur()
+      return
+    }
+
+    if (!showDropdown || results.length === 0) return
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      setHighlightedIndex((index) => (index + 1) % results.length)
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      setHighlightedIndex((index) => (index - 1 + results.length) % results.length)
+    } else if (event.key === 'Enter') {
+      event.preventDefault()
+      const game = results[highlightedIndex]
+      if (game) handleSelect(game)
+    }
   }
 
   return (
@@ -36,6 +65,7 @@ function Header({ onSelectGame, currentView, onNavigate }: HeaderProps) {
         <nav className="flex gap-2">
           <button
             type="button"
+            aria-current={currentView === 'library' ? 'page' : undefined}
             className={`btn btn-sm ${currentView === 'library' ? 'btn-primary' : 'btn-ghost'}`}
             onClick={() => onNavigate('library')}
           >
@@ -43,6 +73,7 @@ function Header({ onSelectGame, currentView, onNavigate }: HeaderProps) {
           </button>
           <button
             type="button"
+            aria-current={currentView === 'stats' ? 'page' : undefined}
             className={`btn btn-sm ${currentView === 'stats' ? 'btn-primary' : 'btn-ghost'}`}
             onClick={() => onNavigate('stats')}
           >
@@ -55,6 +86,14 @@ function Header({ onSelectGame, currentView, onNavigate }: HeaderProps) {
         <input
           type="search"
           placeholder="Rechercher un jeu..."
+          aria-label="Rechercher un jeu"
+          role="combobox"
+          aria-expanded={showDropdown}
+          aria-controls={SEARCH_RESULTS_ID}
+          aria-autocomplete="list"
+          aria-activedescendant={
+            showDropdown && results[highlightedIndex] ? optionId(results[highlightedIndex].id) : undefined
+          }
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           onFocus={() => setIsFocused(true)}
@@ -67,6 +106,8 @@ function Header({ onSelectGame, currentView, onNavigate }: HeaderProps) {
           // onMouseDown prevents the input's onBlur from firing before a click
           // on a result is registered.
           <ul
+            id={SEARCH_RESULTS_ID}
+            role="listbox"
             className="menu absolute z-10 mt-1 w-full rounded-box bg-base-100 shadow-lg"
             onMouseDown={(event) => event.preventDefault()}
           >
@@ -86,15 +127,20 @@ function Header({ onSelectGame, currentView, onNavigate }: HeaderProps) {
 
             {!loading &&
               !error &&
-              results.map((game) => (
-                <li key={game.id}>
+              results.map((game, index) => (
+                <li key={game.id} role="option" id={optionId(game.id)} aria-selected={index === highlightedIndex}>
                   <button
                     type="button"
+                    tabIndex={-1}
                     onClick={() => handleSelect(game)}
-                    className="flex items-center gap-3"
+                    className={`flex items-center gap-3 ${index === highlightedIndex ? 'active' : ''}`}
                   >
                     {game.cover ? (
-                      <img src={game.cover} alt="" className="h-10 w-10 rounded object-cover" />
+                      <img
+                        src={game.cover}
+                        alt={game.title}
+                        className="h-10 w-10 rounded object-cover"
+                      />
                     ) : (
                       <div className="h-10 w-10 rounded bg-base-300" />
                     )}

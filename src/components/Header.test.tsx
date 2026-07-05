@@ -40,4 +40,40 @@ describe('Header', () => {
 
     expect(screen.queryByText('Zelda')).not.toBeInTheDocument()
   })
+
+  it('selects the highlighted result with arrow keys + Enter (US-1 keyboard nav)', async () => {
+    mockedSearchGames.mockResolvedValue([
+      {
+        id: 1,
+        title: 'Zelda',
+        cover: null,
+        released: '2020-01-01',
+        genres: [],
+        platforms: [],
+        metacritic: null,
+      },
+      {
+        id: 2,
+        title: 'Mario',
+        cover: null,
+        released: '2018-01-01',
+        genres: [],
+        platforms: [],
+        metacritic: null,
+      },
+    ])
+    const handleSelect = vi.fn()
+    render(<Header onSelectGame={handleSelect} currentView="library" onNavigate={vi.fn()} />)
+    const input: HTMLInputElement = screen.getByPlaceholderText('Rechercher un jeu...')
+
+    input.focus()
+    fireEvent.change(input, { target: { value: 'ma' } })
+
+    expect(await screen.findByText('Zelda')).toBeInTheDocument()
+
+    fireEvent.keyDown(input, { key: 'ArrowDown' })
+    fireEvent.keyDown(input, { key: 'Enter' })
+
+    expect(handleSelect).toHaveBeenCalledWith(expect.objectContaining({ id: 2, title: 'Mario' }))
+  })
 })

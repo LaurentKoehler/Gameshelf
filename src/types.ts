@@ -24,9 +24,12 @@ export function getStatusLabel(status: GameStatus): string {
 // can never drift apart (US-6b: "one color, one meaning"). Kept as full
 // literal class names (not built via `badge-${name}`) because Tailwind's
 // content scanner only detects classes that appear as complete strings.
+// "backlog" uses "accent" rather than daisyUI's "neutral" (near-black in the
+// dark theme): neutral gave the badge insufficient contrast against the
+// card background, making it hard to see where the badge begins.
 const STATUS_COLORS: Record<GameStatus, { badgeClass: string; chartColor: string }> = {
   wishlist: { badgeClass: 'badge-info', chartColor: 'var(--color-info)' },
-  backlog: { badgeClass: 'badge-neutral', chartColor: 'var(--color-neutral)' },
+  backlog: { badgeClass: 'badge-accent', chartColor: 'var(--color-accent)' },
   playing: { badgeClass: 'badge-primary', chartColor: 'var(--color-primary)' },
   finished: { badgeClass: 'badge-success', chartColor: 'var(--color-success)' },
   replaying: { badgeClass: 'badge-secondary', chartColor: 'var(--color-secondary)' },
