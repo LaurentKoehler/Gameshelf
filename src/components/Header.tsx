@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useGameSearch } from '../hooks/useGameSearch'
+import { MIN_QUERY_LENGTH, useGameSearch } from '../hooks/useGameSearch'
 import type { SearchResult } from '../types'
 
 interface HeaderProps {
@@ -11,7 +11,7 @@ function Header({ onSelectGame }: HeaderProps) {
   const [isFocused, setIsFocused] = useState(false)
   const { results, loading, error } = useGameSearch(query)
 
-  const showDropdown = isFocused && query.trim() !== ''
+  const showDropdown = isFocused && query.trim().length >= MIN_QUERY_LENGTH
 
   function handleSelect(game: SearchResult) {
     onSelectGame(game)
