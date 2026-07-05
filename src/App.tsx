@@ -4,16 +4,18 @@ import Footer from './components/Footer'
 import GameModal from './components/GameModal'
 import GameCard from './components/GameCard'
 import FilterBar from './components/FilterBar'
+import StatsPage from './components/StatsPage'
 import { useLibrary } from './hooks/useLibrary'
 import { countByStatus, getAvailableGenres, selectGames } from './filters'
 import type { SortOption, StatusFilter } from './filters'
-import type { GameStatus, SearchResult } from './types'
+import type { GameStatus, SearchResult, View } from './types'
 
 function App() {
   const [selectedGame, setSelectedGame] = useState<SearchResult | null>(null)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [genreFilter, setGenreFilter] = useState<string | null>(null)
   const [sortBy, setSortBy] = useState<SortOption>('addedAt')
+  const [view, setView] = useState<View>('library')
   const { library, addGame, isInLibrary, updateStatus, setRating, deleteGame } = useLibrary()
 
   function handleAddGame(game: SearchResult, status: GameStatus) {
@@ -25,10 +27,12 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header onSelectGame={setSelectedGame} />
+      <Header onSelectGame={setSelectedGame} currentView={view} onNavigate={setView} />
 
       <main className="flex-1 container mx-auto px-4 py-8">
-        {library.length === 0 ? (
+        {view === 'stats' ? (
+          <StatsPage library={library} />
+        ) : library.length === 0 ? (
           <p className="text-center text-base-content/60">
             Ta bibliothèque est vide. Recherche un jeu pour l'ajouter !
           </p>

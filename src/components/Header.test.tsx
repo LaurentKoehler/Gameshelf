@@ -26,7 +26,7 @@ beforeEach(() => {
 
 describe('Header', () => {
   it('closes the search dropdown when Escape is pressed (US-1)', async () => {
-    render(<Header onSelectGame={vi.fn()} />)
+    render(<Header onSelectGame={vi.fn()} currentView="library" onNavigate={vi.fn()} />)
     const input: HTMLInputElement = screen.getByPlaceholderText('Rechercher un jeu...')
 
     // A real .focus() call (not fireEvent.focus, which doesn't update jsdom's

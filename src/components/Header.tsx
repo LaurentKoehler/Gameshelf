@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import { MIN_QUERY_LENGTH, useGameSearch } from '../hooks/useGameSearch'
-import type { SearchResult } from '../types'
+import type { SearchResult, View } from '../types'
 
 interface HeaderProps {
   onSelectGame: (game: SearchResult) => void
+  currentView: View
+  onNavigate: (view: View) => void
 }
 
-function Header({ onSelectGame }: HeaderProps) {
+function Header({ onSelectGame, currentView, onNavigate }: HeaderProps) {
   const [query, setQuery] = useState('')
   const [isFocused, setIsFocused] = useState(false)
   const { results, loading, error } = useGameSearch(query)
@@ -28,8 +30,25 @@ function Header({ onSelectGame }: HeaderProps) {
 
   return (
     <header className="navbar bg-base-200 px-4 md:px-8">
-      <div className="flex-1">
+      <div className="flex flex-1 items-center gap-6">
         <span className="text-xl font-bold text-primary">🎮 GameShelf</span>
+
+        <nav className="flex gap-2">
+          <button
+            type="button"
+            className={`btn btn-sm ${currentView === 'library' ? 'btn-primary' : 'btn-ghost'}`}
+            onClick={() => onNavigate('library')}
+          >
+            Bibliothèque
+          </button>
+          <button
+            type="button"
+            className={`btn btn-sm ${currentView === 'stats' ? 'btn-primary' : 'btn-ghost'}`}
+            onClick={() => onNavigate('stats')}
+          >
+            Stats
+          </button>
+        </nav>
       </div>
 
       <div className="relative flex-none w-full max-w-xs">
