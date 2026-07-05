@@ -13,7 +13,7 @@ export interface StatsCounters {
 // completion year never changes retroactively just because it later moved
 // to another status (US-4b, US-6).
 export function computeCounters(games: Game[], now: Date = new Date()): StatsCounters {
-  const currentYear = now.getFullYear()
+  const currentYear = now.getUTCFullYear()
 
   const finishedThisYear = games.filter(
     (game) => game.finishedAt != null && new Date(game.finishedAt).getUTCFullYear() === currentYear,
