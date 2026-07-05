@@ -62,7 +62,12 @@ As a user, I want to see all the games in my library so that I can get an overvi
 
 Acceptance criteria:
 - Given my library contains games, when I open the library page, then each game appears as a card with cover, title, colored status badge, and personal rating (if any).
+- Given a game whose status is "Terminé" or "Relancé", when I view its card, then it shows "Terminé le 15/03/2026" (its `finishedAt` in French format).
 - Given my library is empty, when I open the library page, then a friendly empty state invites me to search for a first game.
+
+Business rules:
+- Dates are formatted DD/MM/YYYY via `Intl.DateTimeFormat('fr-FR')`.
+- `addedAt` is never displayed; it only drives sorting.
 
 ### US-4 — Update a game
 As a user, I want to change a game's status, rate it, or remove it so that my library reflects reality.
@@ -85,12 +90,12 @@ Acceptance criteria:
 - Given a game whose status is not "Terminé", when I open its status picker, then "Relancé" is not offered — it can only be reached from "Terminé".
 - Given a game's status becomes "Relancé", when the change is saved, then `finishedAt` is left untouched (it keeps the date of the original completion).
 - Given a replayed game's status becomes "Terminé" again, when the change is saved, then `finishedAt` is overwritten with the new completion date.
-- Given a game has a `finishedAt` set but its current status is neither "Terminé" nor "Relancé" (e.g. it was moved to "Abandonné" or "À faire"), when I view its card, then the card shows "Déjà terminé une fois".
+- Given a game has a `finishedAt` set but its current status is neither "Terminé" nor "Relancé" (e.g. it was moved to "Abandonné" or "À faire"), when I view its card, then the card shows "Déjà terminé une fois (15/03/2026)".
 
 Business rules:
 - "Relancé" is only reachable from "Terminé" in the status picker; this is enforced in the UI (the option isn't offered from any other status), not just assumed from the data.
 - `finishedAt` is never cleared once set. It is only ever overwritten, the next time the game is marked "Terminé" again. **Known v1 limitation**: GameShelf keeps a single completion date, so a game finished and replayed several times only remembers its most recent completion — full playthrough history is out of scope for v1.
-- The "Déjà terminé une fois" mention on a card is derived purely from `finishedAt` being set while `status` is neither `finished` nor `replaying` — no new field is stored for this.
+- The "Déjà terminé une fois" mention on a card is derived purely from `finishedAt` being set while `status` is neither `finished` nor `replaying` — no new field is stored for this. Its date follows the same DD/MM/YYYY formatting as the "Terminé le" mention (US-3).
 
 ### US-5 — Filter and sort the library
 As a user, I want to filter and sort my games so that I can find what to play next.
