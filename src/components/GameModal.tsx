@@ -13,8 +13,11 @@ interface GameModalProps {
   onAdd: (game: SearchResult, status: GameStatus) => void
 }
 
+// US-2 business rule: "backlog" (À faire) is the default status if none is picked.
+const DEFAULT_STATUS: GameStatus = 'backlog'
+
 function GameModal({ game, alreadyInLibrary, onClose, onAdd }: GameModalProps) {
-  const [status, setStatus] = useState<GameStatus>(ADDABLE_STATUSES[0].value)
+  const [status, setStatus] = useState<GameStatus>(DEFAULT_STATUS)
 
   if (!game) return null
 
