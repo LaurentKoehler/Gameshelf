@@ -2,20 +2,12 @@ import type { ChangeEvent } from 'react'
 import {
   formatDate,
   getAvailableStatuses,
+  getStatusBadgeClass,
   getStatusLabel,
   hasFinishedOnceMention,
   shouldShowCompletionDate,
 } from '../types'
 import type { Game, GameStatus } from '../types'
-
-const STATUS_BADGE_CLASSES: Record<GameStatus, string> = {
-  wishlist: 'badge-info',
-  backlog: 'badge-neutral',
-  playing: 'badge-primary',
-  finished: 'badge-success',
-  replaying: 'badge-secondary',
-  dropped: 'badge-error',
-}
 
 // 1 to 10, for the rating <select>.
 const RATING_OPTIONS = Array.from({ length: 10 }, (_, index) => index + 1)
@@ -54,7 +46,7 @@ function GameCard({ game, onUpdateStatus, onSetRating, onDelete }: GameCardProps
 
       <div className="card-body gap-2 p-4">
         <h3 className="card-title text-base">{game.title}</h3>
-        <span className={`badge w-fit ${STATUS_BADGE_CLASSES[game.status]}`}>
+        <span className={`badge w-fit ${getStatusBadgeClass(game.status)}`}>
           {getStatusLabel(game.status)}
         </span>
         {shouldShowCompletionDate(game) && game.finishedAt && (
