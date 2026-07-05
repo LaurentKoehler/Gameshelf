@@ -1,4 +1,6 @@
-import type { Game } from './types'
+import { countByStatus } from './filters'
+import { STATUSES } from './types'
+import type { Game, GameStatus } from './types'
 
 export interface StatsCounters {
   total: number
@@ -64,6 +66,23 @@ export function computeFinishedPerMonth(games: Game[], now: Date = new Date()): 
   }
 
   return months.map(({ label, count }) => ({ month: label, count }))
+}
+
+export interface StatusCount {
+  status: GameStatus
+  label: string
+  count: number
+}
+
+// Bar chart data: one entry per status actually present in the library
+// (US-6b), in the same order as the status filter bar.
+export function computeStatusDistribution(games: Game[]): StatusCount[] {
+  const counts = countByStatus(games)
+  return STATUSES.filter((option) => counts[option.value] > 0).map((option) => ({
+    status: option.value,
+    label: option.label,
+    count: counts[option.value],
+  }))
 }
 
 export interface GenreCount {

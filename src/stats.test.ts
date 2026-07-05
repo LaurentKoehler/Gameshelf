@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { computeCounters, computeFinishedPerMonth, computeGenreDistribution } from './stats'
+import {
+  computeCounters,
+  computeFinishedPerMonth,
+  computeGenreDistribution,
+  computeStatusDistribution,
+} from './stats'
 import type { Game } from './types'
 
 function makeGame(overrides: Partial<Game>): Game {
@@ -98,6 +103,34 @@ describe('computeFinishedPerMonth', () => {
     const result = computeFinishedPerMonth(games, NOW)
 
     expect(result.reduce((sum, month) => sum + month.count, 0)).toBe(0)
+  })
+})
+
+describe('computeStatusDistribution', () => {
+  it('returns one entry per status present, with its exact count', () => {
+    const games = [
+      makeGame({ id: 1, status: 'playing' }),
+      makeGame({ id: 2, status: 'playing' }),
+      makeGame({ id: 3, status: 'wishlist' }),
+    ]
+
+    expect(computeStatusDistribution(games)).toEqual([
+      { status: 'wishlist', label: 'Wishlist', count: 1 },
+      { status: 'playing', label: 'En cours', count: 2 },
+    ])
+  })
+
+  it('omits statuses with no games', () => {
+    const games = [makeGame({ id: 1, status: 'finished' })]
+
+    const result = computeStatusDistribution(games)
+
+    expect(result).toHaveLength(1)
+    expect(result[0].status).toBe('finished')
+  })
+
+  it('returns an empty list for an empty library', () => {
+    expect(computeStatusDistribution([])).toEqual([])
   })
 })
 

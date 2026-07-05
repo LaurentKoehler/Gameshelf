@@ -19,6 +19,30 @@ export function getStatusLabel(status: GameStatus): string {
   return STATUSES.find((option) => option.value === status)!.label
 }
 
+// The daisyUI badge class + matching chart color for each status. Single
+// source of truth for both the card badge and the stats chart, so the two
+// can never drift apart (US-6b: "one color, one meaning"). Kept as full
+// literal class names (not built via `badge-${name}`) because Tailwind's
+// content scanner only detects classes that appear as complete strings.
+const STATUS_COLORS: Record<GameStatus, { badgeClass: string; chartColor: string }> = {
+  wishlist: { badgeClass: 'badge-info', chartColor: 'var(--color-info)' },
+  backlog: { badgeClass: 'badge-neutral', chartColor: 'var(--color-neutral)' },
+  playing: { badgeClass: 'badge-primary', chartColor: 'var(--color-primary)' },
+  finished: { badgeClass: 'badge-success', chartColor: 'var(--color-success)' },
+  replaying: { badgeClass: 'badge-secondary', chartColor: 'var(--color-secondary)' },
+  dropped: { badgeClass: 'badge-error', chartColor: 'var(--color-error)' },
+}
+
+export function getStatusBadgeClass(status: GameStatus): string {
+  return STATUS_COLORS[status].badgeClass
+}
+
+// A real CSS color (the theme's CSS variable) for use as a chart fill, where
+// a Tailwind class name wouldn't apply.
+export function getStatusChartColor(status: GameStatus): string {
+  return STATUS_COLORS[status].chartColor
+}
+
 // True while a game's completion date is meaningful right now (it's finished
 // or replaying it).
 function isCompletedStatus(status: GameStatus): boolean {
